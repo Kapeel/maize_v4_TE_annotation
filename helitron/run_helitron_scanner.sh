@@ -4,13 +4,13 @@ GENOME=$1
 GENOMEFA=$2
 
 ### the base path to find all the lcv alignments
-HSDIR=/usr/local/HelitronScanner_V1
+HSDIR=/HelitronScanner
 ## where to find HelitronScanner.jar
-HSJAR=/usr/local/HelitronScanner_V1/HelitronScanner/HelitronScanner.jar
+HSJAR=/HelitronScanner/HelitronScanner/HelitronScanner.jar
 
 ## path to vsearch and silix for clustering
 SILIX=silix
-VSEARCH=/usr/local/vsearch-2.6.2-linux-x86_64/bin/vsearch
+VSEARCH=vsearch
 
 ### helitron scanner needs some memory to load each chromosome in, so remember that when picking a queue
 CPU=44
