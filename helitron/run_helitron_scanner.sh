@@ -53,9 +53,9 @@ java -Xmx${MEMGB}g -jar ${HSJAR} draw -pscore ${GENOME}.HelitronScanner.rc.paire
 ##   tab format output ##
 ######################### 
 
-python2.7 helitron_scanner_out_to_tabout.py ${GENOME}.HelitronScanner.draw.hel.fa ${GENOME}.HelitronScanner.tabnames.fa > ${GENOME}.HelitronScanner.tabout
+python2.7 /maize_v4_TE_annotation/helitron/helitron_scanner_out_to_tabout.py ${GENOME}.HelitronScanner.draw.hel.fa ${GENOME}.HelitronScanner.tabnames.fa > ${GENOME}.HelitronScanner.tabout
 
-python2.7 helitron_scanner_out_to_tabout.py ${GENOME}.HelitronScanner.draw.rc.hel.fa ${GENOME}.HelitronScanner.tabnames.fa > ${GENOME}.HelitronScanner.rc.tabout
+python2.7 /maize_v4_TE_annotation/helitron/helitron_scanner_out_to_tabout.py ${GENOME}.HelitronScanner.draw.rc.hel.fa ${GENOME}.HelitronScanner.tabnames.fa > ${GENOME}.HelitronScanner.rc.tabout
 
 ######################### 
 ##  Make families      ##
@@ -64,7 +64,7 @@ python2.7 helitron_scanner_out_to_tabout.py ${GENOME}.HelitronScanner.draw.rc.he
 ### think about whether this should be the entire element or the earlier classification based on the terminal 30bp of the helitron. 
 ### remember that the mtec helitrons have lots of N's in their internal regions, so this decision may have been due to data quality.
 
-python2.7 get_last_30bp_fasta.py ${GENOME}.HelitronScanner.tabnames.fa > ${GENOME}.HelitronScanner.tabnames.terminal30bp.fa
+python2.7 /maize_v4_TE_annotation/helitron/get_last_30bp_fasta.py ${GENOME}.HelitronScanner.tabnames.fa > ${GENOME}.HelitronScanner.tabnames.terminal30bp.fa
 
 $VSEARCH -allpairs_global ${GENOME}.HelitronScanner.tabnames.terminal30bp.fa -blast6out ${GENOME}.terminal30bp.allvall.out -id 0.8 -query_cov 0.8 -target_cov 0.8 --threads=$CPU
 
@@ -80,7 +80,7 @@ wget http://maizetedb.org/~maize/TE_12-Feb-2015_15-35.fa
 $VSEARCH --usearch_global TE_12-Feb-2015_15-35.fa -db ${GENOME}.HelitronScanner.tabnames.fa -id 0.8 -query_cov 0.8 -target_cov 0.8 -blast6out ${GENOME}.TEDB.8080.searchglobal.toponly.out -strand both -top_hits_only --threads $CPU
 
 # generate helitron gff3
-Rscript generate_Helitron_gff.R ${GENOME}
+Rscript /maize_v4_TE_annotation/helitron/generate_Helitron_gff.R ${GENOME}
 
 mkdir Helitron_output
 mv ${GENOME}* Helitron_output
