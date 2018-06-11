@@ -1,7 +1,31 @@
 #!/bin/bash -login
 set -e
 
-source ../CONFIG.sh
+#source ../CONFIG.sh
+
+GENOME=$1
+GENOMEFA=$2
+SHORTID=$3
+NEWSPECIES=$4
+
+### the base path to find all the lcv alignments
+HSDIR=/HelitronScanner
+## where to find HelitronScanner.jar
+HSJAR=/HelitronScanner/HelitronScanner/HelitronScanner.jar
+
+## path to vsearch and silix for clustering
+SILIX=silix
+VSEARCH=vsearch
+
+### helitron scanner needs some memory to load each chromosome in, so remember that when picking a queue
+CPU=4
+MEMGB=8
+
+### Python version
+PYTHON2=python2.7
+
+### exsisting SINES
+EXISTINGSINES=/maize_v4_TE_annotation/sine/W22.RST.fa
 
 echo Genome base name $GENOME
 echo Genome fasta with path - needs to be up one from current dir: $GENOMEFA
@@ -36,11 +60,11 @@ echo Running SINE-Finder on $GENOME
 #### I haven't been able to get sine_finder to work with reverse sequences, as it seems to report TSDs wrong on the reverse strand.
 ####   so I'm only reporting on the forward strand.
 ### -f both : outputs csv and fasta
-$PYTHON2 sine_finder.py -T chunkwise -V1 -f both ../${GENOMEFA}
+$PYTHON2 sine_finder.py -T chunkwise -V1 -f both ${GENOMEFA}
 
 #### sine_finder outputs the fasta with the TSD included. I remove these here, so they aren't considered when clustering into families
-mv ../${GENOME}-matches.fasta .
-mv ../${GENOME}-matches.csv .
+mv ${GENOME}-matches.fasta .
+mv ${GENOME}-matches.csv .
 $PYTHON2 remove_tsd_sinefinder.py ${GENOME}-matches.fasta ${GENOME}-matches.noTSD.fa
 
 echo Clustering families
@@ -68,7 +92,7 @@ fi ## end loop if new species
 if [ ! $NEWSPECIES == 1 ] ## we need to add to existing family names
 then
 #### vsearch to identify homology, silix to cluster - matching to EXISTING SINES!
-$VSEARCH --usearch_global ${GENOME}-matches.noTSD.fa -db ../existingTEs/$EXISTINGSINES -id 0.8 -blast6out ${GENOME}-matches.noTSD.MCSnames.8080.out -query_cov 0.8 -target_cov 0.8 --threads $CPU --minseqlength 1
+$VSEARCH --usearch_global ${GENOME}-matches.noTSD.fa -db $EXISTINGSINES -id 0.8 -blast6out ${GENOME}-matches.noTSD.MCSnames.8080.out -query_cov 0.8 -target_cov 0.8 --threads $CPU --minseqlength 1
 
 ## index fasta so that we can subset entries by name
 samtools faidx ${GENOME}-matches.noTSD.fa
